@@ -1,3 +1,35 @@
+# كود CSS لإخفاء أدوات Streamlit وتحويل الواجهة لبرنامج Desktop
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            .stDeployButton {display:none;}
+            
+            /* تحسين شكل السكرول بار ليناسب الجيمرز */
+            ::-webkit-scrollbar {
+                width: 10px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #0e1117; 
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #00f2ff; 
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #7000ff; 
+            }
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
+
+
+
+
+
+
+
 import streamlit as st
 import google.generativeai as genai
 
