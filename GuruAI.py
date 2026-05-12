@@ -222,6 +222,9 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+header {visibility: hidden;}
+.stDeployButton {display:none;}
+footer {visibility: hidden;}
 
 # 3. واجهة المستخدم (UI)
 st.markdown('<p class="main-title">GAMING GURU AI</p>', unsafe_allow_html=True)
