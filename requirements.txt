@@ -1,1 +1,2 @@
-py -m streamlit run "c:/Users/VIP/import streamlit as st.py"
+streamlit
+google-generativeai 
