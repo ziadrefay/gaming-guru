@@ -6,7 +6,7 @@ st.set_page_config(page_title="Gaming Guru AI", page_icon="🎮", layout="wide")
 
 # --- إعداد الـ AI (Gemini) ---
 # حط الـ API Key بتاعك هنا
-genai.configure(api_key="AIzaSyA9kkI1OWlRQNQ5mfa5Aal7BtgvS1KoFo8")
+genai.configure(api_key="AIzaSyBMYA4PasMDzD80_UTj6SZksOs6M6PdgRY")
 
 model = genai.GenerativeModel(
     model_name="gemini-3.1-flash-lite",
@@ -88,7 +88,7 @@ system_instruction = """
 """
 
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+    model_name="gemini-3.1-flash-lite",
     system_instruction=system_instruction
 )
 
@@ -223,7 +223,7 @@ if st.button("إرسال السؤال"):
     if user_input:
         with st.spinner('جاري استدعاء الخبرات القتالية...'):
             try:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-3.1-flash-lite')
                 # إضافة "برومبت" سري لجعل الردود جيمينج أكتر
                 prompt = f"أنت خبير ألعاب محترف جداً، ساعد المستخدم في سؤاله: {user_input}"
                 response = model.generate_content(prompt)
