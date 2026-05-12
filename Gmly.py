@@ -129,3 +129,115 @@ if prompt := st.chat_input("اسأل خبير الألعاب عن أي شيء...
             st.session_state.messages.append({"role": "assistant", "content": full_response})
         except Exception as e:
             st.error(f"حدث خطأ فني: {e}")
+
+
+
+
+
+
+
+
+
+import streamlit as st
+import google.generativeai as genai
+
+# 1. إعدادات الصفحة والتصميم (العنوان اللي بيظهر في جوجل والستايل)
+st.set_page_config(
+    page_title="Gaming Guru AI | خبير الألعاب",
+    page_icon="🎮",
+    layout="centered"
+)
+
+# 2. كود التصميم الاحترافي (CSS)
+st.markdown("""
+    <style>
+    /* خلفية الموقع بالكامل */
+    .stApp {
+        background: #0a0a0a;
+        color: #ffffff;
+    }
+    
+    /* تصميم العنوان الرئيسي مع تأثير توهج */
+    .main-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #00ffcc;
+        text-align: center;
+        font-size: 50px;
+        font-weight: bold;
+        text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        margin-bottom: 30px;
+    }
+
+    /* تصميم صناديق الإدخال */
+    .stTextInput>div>div>input {
+        background-color: #1a1a1a !important;
+        color: #00ffcc !important;
+        border: 2px solid #00ffcc !important;
+        border-radius: 15px !important;
+        padding: 10px 20px !important;
+    }
+
+    /* تصميم الأزرار (Neon Button) */
+    .stButton>button {
+        width: 100%;
+        background: linear-gradient(45deg, #00ffcc, #0099ff) !important;
+        color: black !important;
+        font-weight: bold !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 15px !important;
+        transition: 0.5s !important;
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+    }
+
+    .stButton>button:hover {
+        box-shadow: 0 0 30px #00ffcc !important;
+        transform: translateY(-3px);
+    }
+
+    /* تصميم استجابة الذكاء الاصطناعي */
+    .stAlert {
+        background-color: rgba(0, 255, 204, 0.1) !important;
+        border: 1px solid #00ffcc !important;
+        color: #ffffff !important;
+        border-radius: 15px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# 3. واجهة المستخدم (UI)
+st.markdown('<p class="main-title">GAMING GURU AI</p>', unsafe_allow_html=True)
+st.subheader("🤖 مساعدك الذكي لتطوير الأداء وحل المهام الصعبة")
+
+# الحصول على الـ API Key من الـ Secrets (الأمان)
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=api_key)
+except:
+    st.error("خطأ: لم يتم العثور على API Key في إعدادات Secrets")
+
+# مكان السؤال
+user_input = st.text_input("اسأل خبير الألعاب عن أي شيء (مهام، جرافيك، FPS)...")
+
+if st.button("إرسال السؤال"):
+    if user_input:
+        with st.spinner('جاري استدعاء الخبرات القتالية...'):
+            try:
+                model = genai.GenerativeModel('gemini-pro')
+                # إضافة "برومبت" سري لجعل الردود جيمينج أكتر
+                prompt = f"أنت خبير ألعاب محترف جداً، ساعد المستخدم في سؤاله: {user_input}"
+                response = model.generate_content(prompt)
+                st.markdown(f"### 💡 نصيحة الخبير:")
+                st.write(response.text)
+            except Exception as e:
+                st.error(f"حدث خطأ: {e}")
+    else:
+        st.warning("من فضلك اكتب سؤالك أولاً!")
+
+# إضافة Sidebar (القائمة الجانبية)
+with st.sidebar:
+    st.image("https://cdn-icons-png.flaticon.com/512/681/681392.png", width=100)
+    st.title("إعدادات المساعد")
+    st.info("هذا المساعد مخصص للاعبين المحترفين على أجهزة PC و Console.")
+    st.markdown("---")
+    st.write("🔧 تم التطوير بواسطة: *Gaming Guru Team*")
