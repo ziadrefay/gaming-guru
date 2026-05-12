@@ -9,7 +9,7 @@ st.set_page_config(page_title="Gaming Guru AI", page_icon="🎮", layout="wide")
 genai.configure(api_key="AIzaSyA9kkI1OWlRQNQ5mfa5Aal7BtgvS1KoFo8")
 
 model = genai.GenerativeModel(
-    model_name="gemini-3.1-flash-lite",
+    model_name="gemini-1.5-flash-lite",
     system_instruction="""
     أنت 'Gaming Guru AI'، مساعد ذكي متخصص فقط في عالم الألعاب.
     مهامك:
