@@ -1,34 +1,5 @@
 
 import streamlit as st
-
-# --- كود زرار آخر الأخبار الاحترافي ---
-with st.sidebar:
-    st.markdown("---") # خط فاصل لشكل أنظف
-    
-    # التأكد من وجود متغير اللغة لتجنب الـ NameError
-    if 'selected_lang' in locals() or 'selected_lang' in globals():
-        lang_for_news = selected_lang
-    else:
-        lang_for_news = "العربية" # احتياطي
-
-    # الزرار مع Key فريد عشان ميحصلش Duplicate Error
-    if st.button(t["news_btn"], key="news_fetcher_v2"):
-        try:
-            # التأكد من تعريف المفتاح والموديل لحظياً
-            if "GEMINI_API_KEY" in st.secrets:
-                genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-                news_model = genai.GenerativeModel('gemini-3.1-flash-lite')
-                
-                with st.spinner("🚀 جاري فحص السيرفرات وجلب الأخبار..."):
-                    news_prompt = f"Give me the top 3 latest gaming news globally in {lang_for_news}. Format them as bullet points with emojis."
-                    news_response = news_model.generate_content(news_prompt)
-                    
-                    # عرض الخبر في صندوق جميل
-                    st.info(news_response.text)
-            else:
-                st.error("❌ API Key not found in Streamlit Secrets!")
-        except Exception as e:
-            st.error(f"⚠️ حدث خطأ: {e}")
 # كود الـ CSS السحري لإخفاء كل أدوات الويب وتحويله لبرنامج Desktop
 st.markdown("""
     <style>
