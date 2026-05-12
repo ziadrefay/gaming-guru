@@ -104,6 +104,24 @@ with st.sidebar:
     if st.button("مسح المحادثة"):
         st.session_state.messages = []
 
+# --- إضافة هذا الجزء داخل قسم القائمة الجانبية (with st.sidebar) ---
+
+st.markdown("---")
+st.subheader("📰 مركز أخبار الجيمز")
+if st.button("🔥 هات لي آخر الأخبار"):
+    with st.spinner('جاري مسح الرادارات بحثاً عن أخبار...'):
+        try:
+            # هنا بنطلب من الموديل يجيب أخبار حقيقية (Gemini 1.5 عنده وصول لمعلومات حديثة)
+            news_prompt = "أعطني ملخصاً لأهم 3 أخبار في عالم الألعاب اليوم (عالمياً وعربياً). رتبها بنقاط، واجعل الأسلوب حماسي وجذاب للجيمرز."
+            news_response = model.generate_content(news_prompt)
+            
+            # عرض الأخبار في نافذة منبثقة أو في الجنب
+            st.info(news_response.text)
+        except Exception as e:
+            st.error(f"عذراً، الرادار معطل حالياً: {e}")
+
+# --- يمكنك أيضاً إضافة "شريط إخباري" صغير في الشاشة الرئيسية ---
+
 # تهيئة ذاكرة المحادثة
 if "messages" not in st.session_state:
     st.session_state.messages = []
