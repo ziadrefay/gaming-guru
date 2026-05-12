@@ -7,8 +7,6 @@ st.set_page_config(page_title="Gaming Guru AI", page_icon="🎮", layout="wide")
 # --- إعداد الـ AI (Gemini) ---
 # حط الـ API Key بتاعك هنا
 genai.configure(api_key=api_key = st.secrets["GEMINI_API_KEY"]
-genai.configure(api_key=api_key)
-
 model = genai.GenerativeModel(
     model_name="gemini-3.1-flash-lite",
     system_instruction="""
