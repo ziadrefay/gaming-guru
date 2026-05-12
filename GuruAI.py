@@ -259,3 +259,91 @@ with st.sidebar:
     st.info("هذا المساعد مخصص للاعبين المحترفين على أجهزة PC و Console.")
     st.markdown("---")
     st.write("🔧 تم التطوير بواسطة: *Ziad&Gaming Guru Team*")
+
+
+
+
+import streamlit as st
+import google.generativeai as genai
+
+# 1. إعدادات الصفحة
+st.set_page_config(page_title="Gaming Guru AI", page_icon="🎮", layout="wide")
+
+# 2. قاموس اللغات (تقدر تضيف لغات تانية هنا بسهولة)
+languages = {
+    "العربية": {
+        "title": "🚀 Gaming Guru: مساعدك الذكي",
+        "subtitle": "خبير الألعاب الأول لتطوير الأداء وحل المهام",
+        "sidebar_title": "⚙️ الإعدادات",
+        "lang_label": "اختر اللغة",
+        "input_label": "اسأل الجورو عن أي شيء (مهام، جرافيك، FPS)...",
+        "button": "إرسال السؤال",
+        "news_btn": "📰 هات لي آخر الأخبار",
+        "specs_title": "💻 فحص أداء جهازك",
+        "specs_label": "اكتب مواصفات جهازك هنا:",
+        "specs_btn": "فحص التوافق",
+        "chat_placeholder": "جاري استدعاء الخبرات القتالية..."
+    },
+    "English": {
+        "title": "🚀 Gaming Guru: Your AI Ally",
+        "subtitle": "The #1 Gaming Expert for Performance & Walkthroughs",
+        "sidebar_title": "⚙️ Settings",
+        "lang_label": "Select Language",
+        "input_label": "Ask the Guru anything (Tasks, Graphics, FPS)...",
+        "button": "Send Question",
+        "news_btn": "📰 Get Latest News",
+        "specs_title": "💻 PC Performance Check",
+        "specs_label": "Enter your PC specs here:",
+        "specs_btn": "Check Compatibility",
+        "chat_placeholder": "Summoning combat expertise..."
+    }
+}
+
+# 3. القائمة الجانبية واختيار اللغة
+with st.sidebar:
+    st.title("🎮 Gaming Guru")
+    selected_lang = st.selectbox("🌐 Language / اللغة", list(languages.keys()))
+    # استدعاء الكلمات بناءً على اللغة المختارة
+    t = languages[selected_lang]
+    
+    st.markdown("---")
+    if st.button(t["news_btn"]):
+        st.session_state.show_news = True
+
+# 4. إعداد الـ AI (المفتاح والموديل)
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=api_key)
+    # استخدام نسخة الـ Lite اللي أنت شغال بيها
+    model = genai.GenerativeModel(
+        model_name="gemini-3.1-flash-lite",
+        system_instruction=f"You are Gaming Guru AI. Respond in {selected_lang}. Be enthusiastic and use gaming terminology."
+    )
+except:
+    st.error("API Key Missing!")
+
+# 5. الواجهة الرئيسية
+st.title(t["title"])
+st.subheader(t["subtitle"])
+
+user_input = st.text_input(t["input_label"])
+
+if st.button(t["button"]):
+    if user_input:
+        with st.spinner(t["chat_placeholder"]):
+            try:
+                # بنجبر الموديل يلتزم باللغة المختارة في الرد
+                response = model.generate_content(f"Answer this in {selected_lang}: {user_input}")
+                st.markdown("### 💡 " + ("نصيحة الخبير:" if selected_lang == "العربية" else "Guru's Advice:"))
+                st.success(response.text)
+            except Exception as e:
+                st.error(f"Error: {e}")
+    else:
+        st.warning("Please type something!")
+
+# 6. قسم مواصفات الجهاز
+with st.expander(t["specs_title"]):
+    specs = st.text_area(t["specs_label"])
+    if st.button(t["specs_btn"]):
+        res = model.generate_content(f"Based on these specs: {specs}, can I run {user_input}? Answer in {selected_lang}")
+        st.write(res.text)
