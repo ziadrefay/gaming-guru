@@ -131,25 +131,28 @@ with st.sidebar:
 
 # --- إضافة هذا الجزء داخل قسم القائمة الجانبية (with st.sidebar) ---
 # استبدل كود زرار الأخبار القديم بهذا الكود
+  # ابحث عن الجزء بتاع الزرار واستبدله بالكامل بده
+with st.sidebar:
+    # تأكد إن السطرين دول موجودين قبل الزرار
+    if 'selected_lang' not in locals():
+        selected_lang = "العربية" # لغة افتراضية لو مش مختار
+    
+    t = languages[selected_lang] # تعريف t هنا بيحل الـ NameError
+
     if st.button(t["news_btn"], key="news_button_unique"):
         try:
-            # 1. بنأكد على البرنامج يستخدم المفتاح الصح
             if "GEMINI_API_KEY" in st.secrets:
                 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-                
-                # 2. بنحدد الموديل اللي هيجيب الأخبار
                 model_news = genai.GenerativeModel('gemini-3.1-flash-lite')
                 
-                with st.spinner("جاري جلب آخر البطولات والأخبار..."):
-                    # 3. بنطلب الأخبار (ممكن تغير السؤال ده براحتك)
-                    prompt = f"Give me the latest 3 trending gaming news in {selected_lang}. Be brief and professional."
+                with st.spinner("جاري جلب الأخبار..."):
+                    prompt = f"Give me the latest 3 trending gaming news in {selected_lang}. Be brief."
                     response = model_news.generate_content(prompt)
-                    st.sidebar.success(response.text)
+                    st.success(response.text)
             else:
-                st.sidebar.error("خطأ: لم يتم العثور على المفتاح في الـ Secrets!")
-                
+                st.error("API Key missing in Secrets!")
         except Exception as e:
-            st.sidebar.error(f"حدث خطأ: {e}")
+            st.error(f"Error: {e}")
 
 # تهيئة ذاكرة المحادثة
 if "messages" not in st.session_state:
