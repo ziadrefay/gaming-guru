@@ -1,5 +1,29 @@
 
 import streamlit as st
+# كود الـ CSS السحري لإخفاء كل أدوات الويب وتحويله لبرنامج Desktop
+st.markdown("""
+    <style>
+        /* إخفاء شريط الأدوات العلوي */
+        header {visibility: hidden;}
+        
+        /* إخفاء زر الـ Deploy */
+        .stDeployButton {display:none;}
+        
+        /* إخفاء القائمة الجانبية والقائمة الثلاثية */
+        #MainMenu {visibility: hidden;}
+        
+        /* إخفاء تذييل الصفحة (Made with Streamlit) */
+        footer {visibility: hidden;}
+        
+        /* إخفاء زر التكبير في الصور والجداول لو موجودة */
+        .st-emotion-cache-zq5wmm {display:none;}
+        
+        /* تحسين المسافات بعد إخفاء الهيدر */
+        .block-container {
+            padding-top: 1rem;
+        }
+    </style>
+""", unsafe_allow_html=True)
 import google.generativeai as genai
 
 # --- إعدادات الصفحة ---
