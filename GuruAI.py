@@ -328,7 +328,7 @@ st.subheader(t["subtitle"])
 
 user_input = st.text_input(t["input_label"])
 
-if if st.button(t["button"], key="main_chat_btn"):
+if st.button(t["button"], key="main_chat_submit"):
     if user_input:
         with st.spinner(t["chat_placeholder"]):
             try:
