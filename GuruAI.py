@@ -130,22 +130,26 @@ with st.sidebar:
         st.session_state.messages = []
 
 # --- إضافة هذا الجزء داخل قسم القائمة الجانبية (with st.sidebar) ---
-
-st.markdown("---")
-st.subheader("📰 مركز أخبار الجيمز")
-if st.button("🔥 هات لي آخر الأخبار"):
-    with st.spinner('جاري مسح الرادارات بحثاً عن أخبار...'):
+# استبدل كود زرار الأخبار القديم بهذا الكود
+    if st.button(t["news_btn"], key="news_button_unique"):
         try:
-            # هنا بنطلب من الموديل يجيب أخبار حقيقية (Gemini 1.5 عنده وصول لمعلومات حديثة)
-            news_prompt = "أعطني ملخصاً لأهم 3 أخبار في عالم الألعاب اليوم (عالمياً وعربياً). رتبها بنقاط، واجعل الأسلوب حماسي وجذاب للجيمرز."
-            news_response = model.generate_content(news_prompt)
-            
-            # عرض الأخبار في نافذة منبثقة أو في الجنب
-            st.info(news_response.text)
+            # 1. بنأكد على البرنامج يستخدم المفتاح الصح
+            if "GEMINI_API_KEY" in st.secrets:
+                genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+                
+                # 2. بنحدد الموديل اللي هيجيب الأخبار
+                model_news = genai.GenerativeModel('gemini-3.1-flash-lite')
+                
+                with st.spinner("جاري جلب آخر البطولات والأخبار..."):
+                    # 3. بنطلب الأخبار (ممكن تغير السؤال ده براحتك)
+                    prompt = f"Give me the latest 3 trending gaming news in {selected_lang}. Be brief and professional."
+                    response = model_news.generate_content(prompt)
+                    st.sidebar.success(response.text)
+            else:
+                st.sidebar.error("خطأ: لم يتم العثور على المفتاح في الـ Secrets!")
+                
         except Exception as e:
-            st.error(f"عذراً، الرادار معطل حالياً: {e}")
-
-# --- يمكنك أيضاً إضافة "شريط إخباري" صغير في الشاشة الرئيسية ---
+            st.sidebar.error(f"حدث خطأ: {e}")
 
 # تهيئة ذاكرة المحادثة
 if "messages" not in st.session_state:
