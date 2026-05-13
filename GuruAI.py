@@ -76,7 +76,7 @@ with st.sidebar:
     get_news = st.button(t["news_btn"])
     st.markdown("---")
     st.write("🚀 Version: 1.0 (Flash Lite)")
-    st.write("👨‍💻 Dev: Ziad Zaza")
+    st.write("👨‍💻 Dev: Ziad&Gaming Guru Team")
 
 # --- 4. إعداد الموديل (Gemini 3.1 Flash Lite) ---
 try:
