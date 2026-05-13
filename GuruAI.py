@@ -12,49 +12,43 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# --- 1. إعدادات الصفحة (يجب أن يكون أول أمر برمجياً) ---
+# --- 1. إعدادات الصفحة والـ CSS (النيون والشكل الاحترافي) ---
 st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
 
-# --- 2. كود الـ CSS السحري (إظهار السهم + النيون + إخفاء الهيدر) ---
 st.markdown("""
     <style>
-        /* إخفاء الهيدر والفوتر تماماً */
-        header {visibility: hidden !important;}
-        .stDeployButton {display:none !important;}
-        footer {visibility: hidden !important;}
-
-        /* إظهار زرار القائمة الجانبية (السهم) وتثبيته في الزاوية */
-        [data-testid="stSidebarCollapseButton"] {
-            visibility: visible !important;
-            display: flex !important;
-            position: fixed !important;
-            top: 15px !important;
-            left: 15px !important;
-            z-index: 9999999 !important;
-            background-color: #1a1a1a !important;
-            border: 2px solid #00ffcc !important;
-            color: #00ffcc !important;
-            border-radius: 50% !important;
-            width: 40px !important;
-            height: 40px !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
-
-        [data-testid="stSidebarCollapseButton"]:hover {
-            background-color: #00ffcc !important;
-            color: black !important;
-            box-shadow: 0 0 20px #00ffcc !important;
-        }
-
+        header {visibility: hidden;}
+        .stDeployButton {display:none;}
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
         .stApp { background: #0a0a0a; color: #ffffff; }
-        
         .neon-text {
             color: #00ffcc;
             text-align: center;
-            font-size: 45px;
+            font-size: 50px;
             font-weight: bold;
             text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+            margin-bottom: 20px;
+        }
+        .stButton>button {
+            width: 100%;
+            background: linear-gradient(45deg, #00ffcc, #0099ff) !important;
+            color: black !important;
+            font-weight: bold !important;
+            border-radius: 12px !important;
+            border: none !important;
+            height: 50px;
+            transition: 0.4s;
+        }
+        .stButton>button:hover {
+            box-shadow: 0 0 25px #00ffcc !important;
+            transform: scale(1.02);
+        }
+        .stTextInput>div>div>input {
+            background-color: #161616 !important;
+            color: #00ffcc !important;
+            border: 1px solid #00ffcc !important;
+            border-radius: 10px !important;
         }
     </style>
 """, unsafe_allow_html=True)
