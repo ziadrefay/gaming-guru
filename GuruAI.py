@@ -12,19 +12,19 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# --- 1. إعدادات الصفحة (يجب أن يكون أول أمر من streamlit) ---
+# --- 1. إعدادات الصفحة (يجب أن يكون أول أمر برمجياً) ---
 st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
 
-# --- 2. كود الـ CSS والـ JavaScript لإظهار السهم وإخفاء الهيدر ---
+# --- 2. كود الـ CSS السحري (إظهار السهم + النيون + إخفاء الهيدر) ---
 st.markdown("""
     <style>
-        /* إخفاء الهيدر والفوتر */
+        /* إخفاء الهيدر والفوتر تماماً */
         header {visibility: hidden !important;}
         .stDeployButton {display:none !important;}
         footer {visibility: hidden !important;}
 
-        /* إظهار زرار السهم (السايدبار) في الزاوية */
-        button[data-testid="stSidebarCollapseButton"] {
+        /* إظهار زرار القائمة الجانبية (السهم) وتثبيته في الزاوية */
+        [data-testid="stSidebarCollapseButton"] {
             visibility: visible !important;
             display: flex !important;
             position: fixed !important;
@@ -35,32 +35,29 @@ st.markdown("""
             border: 2px solid #00ffcc !important;
             color: #00ffcc !important;
             border-radius: 50% !important;
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5) !important;
+            width: 40px !important;
+            height: 40px !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
 
-        button[data-testid="stSidebarCollapseButton"]:hover {
+        [data-testid="stSidebarCollapseButton"]:hover {
             background-color: #00ffcc !important;
             color: black !important;
             box-shadow: 0 0 20px #00ffcc !important;
         }
 
-        /* خلفية البرنامج */
         .stApp { background: #0a0a0a; color: #ffffff; }
         
         .neon-text {
             color: #00ffcc;
             text-align: center;
-            font-size: 50px;
+            font-size: 45px;
             font-weight: bold;
             text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
-            margin-bottom: 20px;
         }
     </style>
 """, unsafe_allow_html=True)
-
-# --- باقي الكود بتاعك (اللغات، الموديل، الشات) بيبدأ من هنا ---
-# تأكد إن الـ API Key موجود في الـ Secrets على موقع Streamlit
-# --- 2. نظام اللغات ---
 languages = {
     "العربية": {
         "title": "GEMLY AI",
