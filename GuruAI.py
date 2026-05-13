@@ -42,6 +42,47 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+# --- 1. إعدادات الصفحة والـ CSS المطور ---
+st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
+
+st.markdown("""
+    <style>
+        /* إخفاء الهيدر مع الحفاظ على زرار السايدبار */
+        header {visibility: hidden;}
+        .stDeployButton {display:none;}
+        footer {visibility: hidden;}
+        
+        /* إظهار زرار القائمة الجانبية وتغيير لونه للنيون */
+        [data-testid="stSidebarCollapseButton"] {
+            visibility: visible !important;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 9999;
+            background-color: rgba(0, 255, 204, 0.2);
+            border-radius: 50%;
+            color: #00ffcc !important;
+        }
+
+        /* تحسين شكل السهم لما الماوس يجي عليه */
+        [data-testid="stSidebarCollapseButton"]:hover {
+            background-color: #00ffcc;
+            color: black !important;
+        }
+
+        .stApp { background: #0a0a0a; color: #ffffff; }
+        
+        .neon-text {
+            color: #00ffcc;
+            text-align: center;
+            font-size: 50px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+            margin-bottom: 20px;
+        }
+        /* ... باقي كود الـ CSS بتاعك ... */
+    </style>
+""", unsafe_allow_html=True)
 
 # --- 2. نظام اللغات ---
 languages = {
