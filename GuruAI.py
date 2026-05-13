@@ -83,41 +83,6 @@ st.markdown("""
         /* ... باقي كود الـ CSS بتاعك ... */
     </style>
 """, unsafe_allow_html=True)
-st.markdown("""
-    <style>
-        /* إخفاء الهيدر (الشريط الأبيض) */
-        header {visibility: hidden;}
-        .stDeployButton {display:none;}
-        footer {visibility: hidden;}
-
-        /* إظهار زرار القائمة الجانبية (السهم) بقوة الـ CSS */
-        section[data-testid="stSidebar"] + div button, 
-        button[data-testid="stSidebarCollapseButton"] {
-            visibility: visible !important;
-            display: flex !important;
-            position: fixed !important;
-            top: 15px !important;
-            left: 15px !important;
-            z-index: 999999 !important; /* رفعه فوق كل الطبقات */
-            background-color: #1a1a1a !important;
-            border: 1px solid #00ffcc !important;
-            border-radius: 8px !important;
-            color: #00ffcc !important;
-        }
-
-        /* تحسين شكل السهم عند الوقوف عليه */
-        button[data-testid="stSidebarCollapseButton"]:hover {
-            box-shadow: 0 0 15px #00ffcc !important;
-            background-color: #00ffcc !important;
-            color: black !important;
-        }
-
-        .stApp { background: #0a0a0a; color: #ffffff; }
-        
-        /* ... باقي كود الستايل بتاعك ... */
-    </style>
-""", unsafe_allow_html=True)
-
 # --- 2. نظام اللغات ---
 languages = {
     "العربية": {
