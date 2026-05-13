@@ -3,43 +3,63 @@ import google.generativeai as genai
 from PIL import Image
 
 # --- 1. إعدادات الصفحة والـ CSS (النيون والشكل الاحترافي) ---
+st.set_page_configimport streamlit as st
+import google.generativeai as genai
+from PIL import Image
+
+# --- 1. إعدادات الصفحة ---
 st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
 
+# كود CSS و JavaScript لإظهار زر التحكم في القائمة الجانبية غصب عن أي إعدادات
 st.markdown("""
+    <script>
+        // كود لجعل السهم يظهر ويختفي برمجياً
+        var container = window.parent.document.querySelectorAll(".st-emotion-cache-zq5wmm");
+        if (container) {
+            container.forEach(el => el.style.visibility = "visible");
+        }
+    </script>
     <style>
-        header {visibility: hidden;}
-        .stDeployButton {display:none;}
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        .stApp { background: #0a0a0a; color: #ffffff; }
-        .neon-text {
-            color: #00ffcc;
-            text-align: center;
-            font-size: 50px;
-            font-weight: bold;
-            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
-            margin-bottom: 20px;
+        /* إخفاء الهيدر تماماً */
+        header {visibility: hidden !important;}
+        .stDeployButton {display:none !important;}
+        footer {visibility: hidden !important;}
+
+        /* إنشاء زرار "سهم" جديد تماماً في الزاوية */
+        [data-testid="sidebar-content"] {
+            transition: margin-left .3s;
         }
-        .stButton>button {
-            width: 100%;
-            background: linear-gradient(45deg, #00ffcc, #0099ff) !important;
-            color: black !important;
-            font-weight: bold !important;
-            border-radius: 12px !important;
-            border: none !important;
-            height: 50px;
-            transition: 0.4s;
-        }
-        .stButton>button:hover {
-            box-shadow: 0 0 25px #00ffcc !important;
-            transform: scale(1.02);
-        }
-        .stTextInput>div>div>input {
-            background-color: #161616 !important;
+
+        /* استهداف زرار الـ Collapse الأصلي وإجباره على الظهور */
+        button[aria-label="Close sidebar"], 
+        button[aria-label="Open sidebar"],
+        [data-testid="stSidebarCollapseButton"] {
+            visibility: visible !important;
+            display: flex !important;
+            position: fixed !important;
+            top: 15px !important;
+            left: 15px !important;
+            z-index: 9999999 !important;
+            background-color: #1a1a1a !important;
+            border: 2px solid #00ffcc !important;
             color: #00ffcc !important;
-            border: 1px solid #00ffcc !important;
-            border-radius: 10px !important;
+            border-radius: 50% !important;
+            width: 40px !important;
+            height: 40px !important;
+            justify-content: center !important;
+            align-items: center !important;
+            cursor: pointer !important;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5) !important;
         }
+
+        /* تحسين شكل السهم عند الوقوف عليه */
+        [data-testid="stSidebarCollapseButton"]:hover {
+            background-color: #00ffcc !important;
+            color: black !important;
+            box-shadow: 0 0 20px #00ffcc !important;
+        }
+
+        .stApp { background: #0a0a0a; color: #ffffff; }
     </style>
 """, unsafe_allow_html=True)
 # --- 1. إعدادات الصفحة والـ CSS المطور ---
