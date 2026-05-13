@@ -3,16 +3,6 @@ import google.generativeai as genai
 from PIL import Image
 
 # --- 1. إعدادات الصفحة والـ CSS (النيون والشكل الاحترافي) ---
-st.set_page_configimport streamlit as st
-import google.generativeai as genai
-from PIL import Image
-
-# --- 1. إعدادات الصفحة ---
-import streamlit as st
-import google.generativeai as genai
-from PIL import Image
-
-# --- 1. إعدادات الصفحة والـ CSS (النيون والشكل الاحترافي) ---
 st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
 
 st.markdown("""
@@ -52,6 +42,8 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+# --- 2. نظام اللغات ---
 languages = {
     "العربية": {
         "title": "GEMLY AI",
