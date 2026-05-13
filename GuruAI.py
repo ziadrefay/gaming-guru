@@ -8,32 +8,23 @@ import google.generativeai as genai
 from PIL import Image
 
 # --- 1. إعدادات الصفحة ---
+import streamlit as st
+import google.generativeai as genai
+from PIL import Image
+
+# --- 1. إعدادات الصفحة (يجب أن يكون أول أمر من streamlit) ---
 st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
 
-# كود CSS و JavaScript لإظهار زر التحكم في القائمة الجانبية غصب عن أي إعدادات
+# --- 2. كود الـ CSS والـ JavaScript لإظهار السهم وإخفاء الهيدر ---
 st.markdown("""
-    <script>
-        // كود لجعل السهم يظهر ويختفي برمجياً
-        var container = window.parent.document.querySelectorAll(".st-emotion-cache-zq5wmm");
-        if (container) {
-            container.forEach(el => el.style.visibility = "visible");
-        }
-    </script>
     <style>
-        /* إخفاء الهيدر تماماً */
+        /* إخفاء الهيدر والفوتر */
         header {visibility: hidden !important;}
         .stDeployButton {display:none !important;}
         footer {visibility: hidden !important;}
 
-        /* إنشاء زرار "سهم" جديد تماماً في الزاوية */
-        [data-testid="sidebar-content"] {
-            transition: margin-left .3s;
-        }
-
-        /* استهداف زرار الـ Collapse الأصلي وإجباره على الظهور */
-        button[aria-label="Close sidebar"], 
-        button[aria-label="Open sidebar"],
-        [data-testid="stSidebarCollapseButton"] {
+        /* إظهار زرار السهم (السايدبار) في الزاوية */
+        button[data-testid="stSidebarCollapseButton"] {
             visibility: visible !important;
             display: flex !important;
             position: fixed !important;
@@ -44,52 +35,16 @@ st.markdown("""
             border: 2px solid #00ffcc !important;
             color: #00ffcc !important;
             border-radius: 50% !important;
-            width: 40px !important;
-            height: 40px !important;
-            justify-content: center !important;
-            align-items: center !important;
-            cursor: pointer !important;
             box-shadow: 0 0 10px rgba(0, 255, 204, 0.5) !important;
         }
 
-        /* تحسين شكل السهم عند الوقوف عليه */
-        [data-testid="stSidebarCollapseButton"]:hover {
+        button[data-testid="stSidebarCollapseButton"]:hover {
             background-color: #00ffcc !important;
             color: black !important;
             box-shadow: 0 0 20px #00ffcc !important;
         }
 
-        .stApp { background: #0a0a0a; color: #ffffff; }
-    </style>
-""", unsafe_allow_html=True)
-# --- 1. إعدادات الصفحة والـ CSS المطور ---
-st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
-
-st.markdown("""
-    <style>
-        /* إخفاء الهيدر مع الحفاظ على زرار السايدبار */
-        header {visibility: hidden;}
-        .stDeployButton {display:none;}
-        footer {visibility: hidden;}
-        
-        /* إظهار زرار القائمة الجانبية وتغيير لونه للنيون */
-        [data-testid="stSidebarCollapseButton"] {
-            visibility: visible !important;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 9999;
-            background-color: rgba(0, 255, 204, 0.2);
-            border-radius: 50%;
-            color: #00ffcc !important;
-        }
-
-        /* تحسين شكل السهم لما الماوس يجي عليه */
-        [data-testid="stSidebarCollapseButton"]:hover {
-            background-color: #00ffcc;
-            color: black !important;
-        }
-
+        /* خلفية البرنامج */
         .stApp { background: #0a0a0a; color: #ffffff; }
         
         .neon-text {
@@ -100,9 +55,11 @@ st.markdown("""
             text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
             margin-bottom: 20px;
         }
-        /* ... باقي كود الـ CSS بتاعك ... */
     </style>
 """, unsafe_allow_html=True)
+
+# --- باقي الكود بتاعك (اللغات، الموديل، الشات) بيبدأ من هنا ---
+# تأكد إن الـ API Key موجود في الـ Secrets على موقع Streamlit
 # --- 2. نظام اللغات ---
 languages = {
     "العربية": {
