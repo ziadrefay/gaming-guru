@@ -82,7 +82,7 @@ with st.sidebar:
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
     model = genai.GenerativeModel(
-        model_name="gemini-3.1-flash-lite",
+        model_name="gemini-1.5-flash",
         system_instruction=f"You are Gemly AI, a pro gaming expert. Always respond in {selected_lang}. Use gaming slang and be very helpful with technical issues and game walkthroughs."
     )
 except:
