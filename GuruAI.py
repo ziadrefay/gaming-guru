@@ -3,137 +3,171 @@ import google.generativeai as genai
 from PIL import Image
 
 # --- 1. إعدادات الصفحة ---
-st.set_page_config(page_title="GEMLY AI | Ultimate Gamer OS", page_icon="🎮", layout="wide")
+st.set_page_config(page_title="GEMLY HUB | Real Identity", page_icon="💎", layout="wide")
 
-# --- 2. قاموس اللغات الشامل (لترجمة الموقع بالكامل) ---
-lang_db = {
-    "English": {
-        "dir": "ltr", "align": "left", "font": "Orbitron",
-        "title": "GEMLY AI", "tagline": "Built by a gamer, for gamers",
-        "news_h": "LIVE NEWS FEED", "lore_h": "GAME LORE", "specs_h": "PC PERFORMANCE",
-        "input_p": "Speak to the Legend...", "btn_clear": "Wipe Matrix",
-        "side_hub": "GEMLY HUB", "news_prompt": "Give me 3 latest gaming news headlines for May 2026."
-    },
-    "العربية": {
-        "dir": "rtl", "align": "right", "font": "Cairo",
-        "title": "جيملي AI", "tagline": "صنع بواسطة جيمر، من أجل الجيمرز",
-        "news_h": "آخر الأخبار الحية", "lore_h": "حكاوي الألعاب", "specs_h": "أداء الجهاز",
-        "input_p": "تحدث مع الأسطورة جيملي...", "btn_clear": "مسح الأرشيف",
-        "side_hub": "مركز التحكم", "news_prompt": "أعطني 3 عناوين لأخبار الألعاب العالمية لشهر مايو 2026 باللغة العربية."
-    },
-    "日本語": {
-        "dir": "ltr", "align": "left", "font": "Sansom",
-        "title": "ジェムリー AI", "tagline": "ゲーマーのために",
-        "news_h": "ライブニュース", "lore_h": "ゲームの物語", "specs_h": "スペック分析",
-        "input_p": "伝説と話す...", "btn_clear": "消去する",
-        "side_hub": "ハブ", "news_prompt": "2026年5月の最新ゲームニュースを3つ教えてください。"
-    }
+# --- 2. محرك اللغات الشامل (Global Language Matrix) ---
+languages_config = {
+    "English": {"dir": "ltr", "align": "left", "font": "Orbitron"},
+    "العربية": {"dir": "rtl", "align": "right", "font": "Cairo"},
+    "Deutsch": {"dir": "ltr", "align": "left", "font": "Orbitron"},
+    "Français": {"dir": "ltr", "align": "left", "font": "Orbitron"},
+    "日本語": {"dir": "ltr", "align": "left", "font": "sans-serif"},
+    "中文": {"dir": "ltr", "align": "left", "font": "sans-serif"},
+    "Русский": {"dir": "ltr", "align": "left", "font": "Orbitron"},
+    "Português": {"dir": "ltr", "align": "left", "font": "Orbitron"}
 }
 
-# --- 3. الـ CSS الخرافي (Ultra Gaming Aesthetics) ---
+# --- 3. الـ CSS السحري (نفس الصورة بالملّي) ---
 st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Cairo:wght@400;900&display=swap');
 
-        /* الهيدر والزرار النيون */
-        header {background: transparent !important;}
-        button[data-testid="stSidebarCollapseButton"] {
-            background-color: #00ffcc !important; color: #000 !important;
-            border: 2px solid #fff !important; box-shadow: 0 0 20px #00ffcc;
-        }
-
-        /* الخلفية المجرة المتحركة */
+        /* الخلفية المجرة الكونية */
         .stApp {
-            background: radial-gradient(circle at top right, #1a1a2e, #020205);
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1600');
+            background-size: cover;
             color: #fff;
+            font-family: 'Orbitron', 'Cairo', sans-serif;
         }
 
-        /* العنوان RGB المتحرك */
-        .neon-title {
-            text-align: center; font-size: clamp(40px, 10vw, 85px); font-weight: 900;
-            background: linear-gradient(90deg, #00ffcc, #ff00ff, #00ffcc);
-            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: gradient 3s linear infinite; margin-top: -70px;
+        /* السايدبار المطابق للصورة */
+        [data-testid="stSidebar"] {
+            background: rgba(10, 10, 25, 0.95) !important;
+            border-right: 1px solid rgba(0, 255, 204, 0.3);
+            min-width: 320px !important;
         }
-        @keyframes gradient { 0% {background-position: 0% 50%;} 100% {background-position: 200% 50%;} }
-
-        .tagline { text-align: center; color: #aaa; letter-spacing: 5px; font-size: 18px; margin-top: -20px; }
-
-        /* السايدبار الزجاجي */
-        [data-testid="stSidebar"] { background: rgba(10, 10, 20, 0.9) !important; backdrop-filter: blur(25px); border-right: 1px solid #00ffcc44; }
-
-        /* تصميم صناديق الأخبار والشات */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 15px; padding: 15px; margin-bottom: 10px; transition: 0.3s;
+        
+        .sidebar-header { color: #00ffcc; font-size: 24px; font-weight: 900; display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        
+        .menu-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            color: #fff;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
         }
-        .glass-card:hover { border-color: #ff00ff; box-shadow: 0 0 15px rgba(255, 0, 255, 0.3); }
+        .menu-item:hover { border-color: #ff00ff; box-shadow: 0 0 15px rgba(255, 0, 255, 0.3); cursor: pointer; }
 
+        /* الهيدر الرئيسي (GEMLY AI) */
+        .main-title-container { text-align: center; margin-top: -60px; }
+        .main-title {
+            font-size: 65px; font-weight: 900;
+            background: linear-gradient(to right, #00ffcc, #ff00ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0;
+        }
+        .tagline { font-size: 16px; letter-spacing: 4px; color: #eee; margin-top: -15px; }
+
+        /* كارت القصة الكبير (الذي في منتصف الصورة) */
+        .story-hero-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #00ffcc;
+            border-radius: 20px;
+            padding: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .story-overlay {
+            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(0, 255, 204, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ffcc;
+            padding: 15px; border-radius: 10px;
+        }
+
+        /* صندوق الشات والمدخلات */
         [data-testid="stChatMessage"] {
-            background: rgba(0, 255, 204, 0.05) !important; border-radius: 20px !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(0, 255, 204, 0.15) !important;
+            border-radius: 15px !important;
         }
+        .stChatInputContainer { background: transparent !important; border: 1px solid #00ffcc44 !important; border-radius: 20px !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 4. إدارة الحالة والذكاء الاصطناعي ---
+# --- 4. السايدبار (نفس محتوى الصورة) ---
 if "messages" not in st.session_state: st.session_state.messages = []
-try:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-1.5-flash')
-except: st.error("Check API Key!")
 
-# --- 5. القائمة الجانبية (The Control Center) ---
 with st.sidebar:
-    st.markdown("<h1 style='color:#00ffcc; text-align:center;'>🕹️ HUB</h1>", unsafe_allow_html=True)
-    sel_lang = st.selectbox("Dimension Language", list(lang_db.keys()))
-    ld = lang_db[sel_lang] # تحميل نصوص اللغة المختارة
-
-    st.markdown(f"### 📡 {ld['news_h']}")
-    if st.button("🔄 Refresh News"):
-        news_res = model.generate_content(ld['news_prompt'])
-        st.session_state.current_news = news_res.text
+    st.markdown('<div class="sidebar-header">🕹️ GEMLY HUB</div>', unsafe_allow_html=True)
     
-    if "current_news" in st.session_state:
-        st.markdown(f"<div class='glass-card' style='font-size:12px; direction:{ld['dir']}'>{st.session_state.current_news}</div>", unsafe_allow_html=True)
-
+    # اختيار اللغة (أهم جزء)
+    selected_lang = st.selectbox("Select Language", list(languages_config.keys()))
+    l_cfg = languages_config[selected_lang]
+    
     st.markdown("---")
-    if st.button(ld['btn_clear']):
+    # القوائم بالترتيب المطابق للصورة
+    items = [
+        ("📖", "Game Lore & Stories"),
+        ("👤", "Character Bios"),
+        ("🗺️", "World History"),
+        ("❓", "Game Trivia"),
+        ("📰", "Global News")
+    ]
+    for icon, text in items:
+        st.markdown(f'<div class="menu-item"><span>{icon}</span> {text}</div>', unsafe_allow_html=True)
+    
+    st.markdown("---")
+    if st.button("🗑️ Clear Matrix Archive"):
         st.session_state.messages = []
         st.rerun()
     
-    st.markdown(f"<div style='text-align:center;'><br><b>Ziad Zaza</b><br><small>{ld['tagline']}</small></div>", unsafe_allow_html=True)
+    # بروفايل المطور
+    st.markdown(f"""
+        <div style='display:flex; align-items:center; gap:10px; padding-top:20px;'>
+            <img src='https://avatars.githubusercontent.com/u/1?v=4' width='50' style='border-radius:50%; border:1px solid #00ffcc;'>
+            <div><b>Ziad Zaza</b><br><small style='color:#00ffcc;'>Dev & Gamer</small></div>
+        </div>
+    """, unsafe_allow_html=True)
 
-# --- 6. الواجهة الرئيسية (Dynamic UI) ---
-st.markdown(f"<div class='neon-title' style='font-family:{ld['font']}'>{ld['title']}</div>", unsafe_allow_html=True)
-st.markdown(f"<div class='tagline'>{ld['tagline']}</div>", unsafe_allow_html=True)
+# --- 5. الذكاء الاصطناعي ---
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model = genai.GenerativeModel('gemini-1.5-flash')
+except: st.error("Missing API Key!")
 
-# عرض الشات بالمحاذاة الصحيحة
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(f"<div style='direction:{ld['dir']}; text-align:{ld['align']}'>{msg['content']}</div>", unsafe_allow_html=True)
+# --- 6. الواجهة الرئيسية (التصميم البصري) ---
+st.markdown(f"""
+    <div class="main-title-container">
+        <h1 class="main-title">GEMLY AI</h1>
+        <p class="tagline">Built by a gamer, for gamers</p>
+    </div>
+""", unsafe_allow_html=True)
 
-# إدخال الشات
-if prompt := st.chat_input(ld['input_p']):
+# عرض الكارت الكبير (Hero Story) كما في الصورة
+st.markdown(f"""
+    <div class="story-hero-card">
+        <img src="https://wallpapers.com/images/featured/gaming-background-9vof8v8d29y80w66.jpg" style="width:100%; height:350px; object-fit:cover; opacity:0.6;">
+        <div class="story-overlay">
+            <h4 style="margin:0; color:#00ffcc;">GEMLY STORIES: THE FORGOTTEN ARCANA</h4>
+            <p style="margin:5px 0; font-size:12px; color:#eee;">Discover the legend of the ancient world. Gemly is now analyzing 2026 lore...</p>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
+# عرض الشات
+for m in st.session_state.messages:
+    with st.chat_message(m["role"]):
+        st.markdown(f"<div style='direction:{l_cfg['dir']}; text-align:{l_cfg['align']}'>{m['content']}</div>", unsafe_allow_html=True)
+
+# الإدخال (شغال مع اللغات)
+if prompt := st.chat_input("Speak to the Legend..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"): st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("🤖"):
+        with st.spinner("🎮 Connecting..."):
             history = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
-            resp = model.generate_content(f"You are Gemly AI. Respond ONLY in {sel_lang}. Expert in Game Lore, Character Stories, and Specs. Context: {history}\nUser: {prompt}")
-            st.markdown(f"<div style='direction:{ld['dir']}; text-align:{ld['align']}'>{resp.text}</div>", unsafe_allow_html=True)
-            st.session_state.messages.append({"role": "assistant", "content": resp.text})
-
-# --- 7. قسم فحص الأداء والقصص (Dynamic Expanders) ---
-st.markdown("<br>", unsafe_allow_html=True)
-col_a, col_b = st.columns(2)
-with col_a:
-    with st.expander(f"📖 {ld['lore_h']}"):
-        st.write("Ask Gemly about any character lore in the chat above!")
-with col_b:
-    with st.expander(f"💻 {ld['specs_h']}"):
-        hw = st.text_input("GPU/CPU:")
-        if st.button("Analyze Performance"):
-            res = model.generate_content(f"Can {hw} run modern games? Tips in {sel_lang}.")
-            st.info(res.text)
+            # برمجة الشخصية على سرد القصص والأخبار
+            sys_msg = f"You are Gemly AI. Respond ONLY in {selected_lang}. You are a legendary gamer and lore teller. Context: {history}"
+            response = model.generate_content(sys_msg + "\nUser: " + prompt)
+            st.markdown(f"<div style='direction:{l_cfg['dir']}; text-align:{l_cfg['align']}'>{response.text}</div>", unsafe_allow_html=True)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
