@@ -5,33 +5,37 @@ from PIL import Image
 # --- 1. إعدادات الصفحة ---
 st.set_page_config(page_title="Gemly AI Ultra", page_icon="🎮", layout="wide")
 
-# --- 2. CSS احترافي (حل مشكلة السهم + تحسين الشكل) ---
+# --- 2. كود الـ CSS والـ JavaScript (إظهار الزرار وتحسين الشكل) ---
 st.markdown("""
     <style>
-        /* إخفاء الهيدر تماماً */
+        /* إخفاء الهيدر والفوتر تماماً */
         header {visibility: hidden !important; height: 0px !important;}
         .stDeployButton {display:none !important;}
         footer {visibility: hidden !important;}
 
-        /* إجبار سهم السايدبار على الظهور في كل الحالات */
-        button[data-testid="stSidebarCollapseButton"] {
-            visibility: visible !important;
-            display: flex !important;
-            position: fixed !important;
-            top: 20px !important;
-            left: 20px !important;
-            z-index: 9999999 !important;
-            background-color: #0a0a0a !important;
-            border: 2px solid #00ffcc !important;
-            border-radius: 10px !important;
-            box-shadow: 0 0 15px #00ffcc !important;
-            color: #00ffcc !important;
+        /* تصميم زرار القائمة الجانبية المخصص */
+        .custom-sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999999;
+            background: #0a0a0a;
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            padding: 10px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 0 15px #00ffcc;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        /* تأثير عند الوقوف على السهم */
-        button[data-testid="stSidebarCollapseButton"]:hover {
-            background-color: #00ffcc !important;
-            color: #000 !important;
+        .custom-sidebar-toggle:hover {
+            background: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 25px #00ffcc;
         }
 
         /* تنسيق خلفية التطبيق */
@@ -47,25 +51,36 @@ st.markdown("""
             border-radius: 20px !important;
             backdrop-filter: blur(10px);
             margin-bottom: 15px !important;
-            padding: 15px !important;
         }
 
-        /* عنوان النيون */
-        .neon-text {
+        /* عنوان النيون الكبير */
+        .neon-title {
             color: #00ffcc;
             text-align: center;
-            font-size: 60px;
-            font-weight: 800;
-            text-shadow: 0 0 15px #00ffcc, 0 0 30px #0099ff;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        /* تنسيق صناديق الإدخال */
-        .stChatInputContainer {
-            padding-bottom: 20px !important;
+            font-size: 55px;
+            font-weight: 900;
+            text-shadow: 0 0 20px #00ffcc;
+            margin-bottom: 5px;
         }
     </style>
+
+    <script>
+        // كود لفتح القائمة الجانبية برمجياً عند الضغط على الزرار المخصص
+        function toggleSidebar() {
+            const sidebarButton = window.parent.document.querySelector('button[data-testid="stSidebarCollapseButton"]');
+            if (sidebarButton) {
+                sidebarButton.click();
+            } else {
+                // إذا كان الزرار الأصلي غير موجود، نحاول فتحه بطريقة بديلة
+                const openButton = window.parent.document.querySelector('button[aria-label="Open sidebar"]');
+                if (openButton) openButton.click();
+            }
+        }
+    </script>
+    
+    <div class="custom-sidebar-toggle" onclick="toggleSidebar()">
+        <span>☰</span> <span>MENU</span>
+    </div>
 """, unsafe_allow_html=True)
 
 # --- 3. تهيئة الذاكرة واللغات ---
@@ -75,24 +90,24 @@ if "messages" not in st.session_state:
 languages = {
     "العربية": {
         "title": "GEMLY AI",
-        "subtitle": "مساعدك الشخصي في عالم الألعاب والبرمجة",
-        "clear": "🗑️ مسح المحادثة",
-        "placeholder": "اكتب سؤالك هنا يا بطل...",
+        "subtitle": "خبير الألعاب والذكاء الاصطناعي",
+        "clear": "🗑️ مسح الشات",
+        "placeholder": "اسأل Gemly أي حاجة...",
         "specs": "💻 فحص المواصفات"
     },
     "English": {
         "title": "GEMLY AI",
-        "subtitle": "Your Ultimate Gaming & Tech Ally",
-        "clear": "🗑️ Clear History",
-        "placeholder": "Type your message, Legend...",
+        "subtitle": "Gaming & Tech Expert AI",
+        "clear": "🗑️ Clear Chat",
+        "placeholder": "Ask Gemly anything...",
         "specs": "💻 Specs Check"
     }
 }
 
 # --- 4. القائمة الجانبية ---
 with st.sidebar:
-    st.markdown("<h1 style='color:#00ffcc; text-shadow: 0 0 10px #00ffcc;'>🎮 GEMLY PANEL</h1>", unsafe_allow_html=True)
-    lang_choice = st.selectbox("🌐 Choose Language", ["العربية", "English"])
+    st.markdown("<h1 style='color:#00ffcc;'>🎮 GEMLY PANEL</h1>", unsafe_allow_html=True)
+    lang_choice = st.selectbox("🌐 Language", ["العربية", "English"])
     t = languages[lang_choice]
     
     st.markdown("---")
@@ -101,49 +116,47 @@ with st.sidebar:
         st.rerun()
     
     st.markdown("---")
-    st.info("Dev: Ziad & Gaming Guru 💎")
+    st.write("👨‍💻 Dev: Ziad Zaza")
 
-# --- 5. إعداد الموديل (Gemini 3.1 Flash Lite) ---
+# --- 5. إعداد الموديل ---
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-1.5-flash') # التبديل لـ 1.5 لدعم الذاكرة بشكل أفضل
+    # استخدمنا 1.5 فلاش لأنه الأفضل في تذكر المحادثات (Chat History)
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except:
     st.error("API Key Missing!")
 
-# --- 6. عرض المحتوى الرئيسي ---
-st.markdown(f'<p class="neon-text">{t["title"]}</p>', unsafe_allow_html=True)
-st.markdown(f'<p style="text-align:center; opacity:0.7;">{t["subtitle"]}</p>', unsafe_allow_html=True)
+# --- 6. الواجهة الرئيسية ---
+st.markdown(f'<p class="neon-title">{t["title"]}</p>', unsafe_allow_html=True)
+st.markdown(f'<p style="text-align:center; opacity:0.8;">{t["subtitle"]}</p>', unsafe_allow_html=True)
 
-# عرض الرسائل القديمة
+# عرض تاريخ المحادثة
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# إدخال الشات
+# إدخال الشات الجديد
 if prompt := st.chat_input(t["placeholder"]):
-    # إضافة سؤال المستخدم
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # توليد الرد
     with st.chat_message("assistant"):
-        with st.spinner("Analyzing..."):
+        with st.spinner("Thinking..."):
             try:
-                # سحب الذاكرة لزيادة الذكاء
+                # تجميع الذاكرة لإرسالها للموديل
                 history = [{"role": m["role"], "parts": [m["content"]]} for m in st.session_state.messages]
-                # إرسال السياق كاملاً
-                response = model.generate_content(f"Answer as Gemly AI in {lang_choice}. Be a gaming pro. Context: {history}")
+                response = model.generate_content(f"Role: Pro Gaming Assistant. Response Language: {lang_choice}. Context: {history}")
                 
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
-            except Exception as e:
-                st.error("Connection lost. Try again.")
+            except:
+                st.error("Connection Error!")
 
-# --- 7. قسم فحص المواصفات (أسفل الصفحة) ---
+# --- 7. قسم فحص المواصفات ---
 with st.expander(t["specs"]):
-    cpu = st.text_input("Your Hardware:")
-    game = st.text_input("Game Target:")
-    if st.button("Get Performance Plan"):
-        res = model.generate_content(f"Can {cpu} run {game}? best settings for FPS?")
+    hw = st.text_input("CPU/GPU:")
+    gm = st.text_input("Game:")
+    if st.button("Check"):
+        res = model.generate_content(f"Can {hw} run {gm}? FPS tips?")
         st.write(res.text)
