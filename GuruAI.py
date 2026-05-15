@@ -2,24 +2,54 @@ import streamlit as st
 import google.generativeai as genai
 from PIL import Image
 
-# --- 1. إعدادات الصفحة والـ CSS (النيون والشكل الاحترافي) ---
-st.set_page_config(page_title="Gemly AI", page_icon="🎮", layout="wide")
+# --- 1. إعدادات الصفحة ---
+st.set_page_config(page_title="Gemly AI Pro", page_icon="🎮", layout="wide")
 
+# --- 2. كود الـ CSS المطور (للسهم، الهيدر، وفقاعات الشات) ---
 st.markdown("""
     <style>
-        header {visibility: hidden;}
-        .stDeployButton {display:none;}
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
+        /* إخفاء الهيدر والفوتر */
+        header {visibility: hidden !important;}
+        .stDeployButton {display:none !important;}
+        footer {visibility: hidden !important;}
+
+        /* إظهار وتصميم سهم القائمة الجانبية (Sidebar Arrow) */
+        [data-testid="stSidebarCollapseButton"] {
+            visibility: visible !important;
+            display: flex !important;
+            position: fixed !important;
+            top: 15px !important;
+            left: 15px !important;
+            z-index: 9999999 !important;
+            background-color: #1a1a1a !important;
+            border: 2px solid #00ffcc !important;
+            color: #00ffcc !important;
+            border-radius: 50% !important;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4) !important;
+        }
+
+        /* خلفية البرنامج */
         .stApp { background: #0a0a0a; color: #ffffff; }
+
+        /* تصميم فقاعات المحادثة */
+        [data-testid="stChatMessage"] {
+            background-color: #161616 !important;
+            border: 1px solid #333 !important;
+            border-radius: 15px !important;
+            padding: 10px !important;
+            margin-bottom: 10px !important;
+        }
+        
         .neon-text {
             color: #00ffcc;
             text-align: center;
             font-size: 50px;
             font-weight: bold;
             text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
+
+        /* تنسيق أزرار النيون */
         .stButton>button {
             width: 100%;
             background: linear-gradient(45deg, #00ffcc, #0099ff) !important;
@@ -27,100 +57,116 @@ st.markdown("""
             font-weight: bold !important;
             border-radius: 12px !important;
             border: none !important;
-            height: 50px;
             transition: 0.4s;
         }
         .stButton>button:hover {
             box-shadow: 0 0 25px #00ffcc !important;
             transform: scale(1.02);
         }
-        .stTextInput>div>div>input {
-            background-color: #161616 !important;
-            color: #00ffcc !important;
-            border: 1px solid #00ffcc !important;
-            border-radius: 10px !important;
-        }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. نظام اللغات ---
+# --- 3. نظام اللغات والذاكرة ---
 languages = {
     "العربية": {
         "title": "GEMLY AI",
         "subtitle": "خبير الألعاب الأول المزود بذكاء Gemini 3.1",
-        "news_btn": "📰 أخبار الألعاب العالمية",
-        "input_placeholder": "اسأل عن مهمة، قصة، أو تحسين FPS...",
-        "img_label": "🖼️ ارفع سكرين شوت من اللعبة (اختياري)",
-        "submit": "إرسال السؤال",
+        "news_btn": "📰 أخبار الألعاب",
+        "clear_btn": "🗑️ مسح المحادثة",
+        "input_placeholder": "اسأل Gemly عن أي شيء في عالم الألعاب...",
+        "img_label": "🖼️ ارفع سكرين شوت (اختياري)",
         "specs_header": "💻 فحص توافق جهازك",
-        "loading": "جاري استدعاء الخبرات القتالية..."
+        "loading": "جاري تحليل البيانات القتالية..."
     },
     "English": {
         "title": "GEMLY AI",
         "subtitle": "The #1 Gaming Expert powered by Gemini 3.1",
-        "news_btn": "📰 Global Gaming News",
-        "input_placeholder": "Ask about missions, lore, or FPS boost...",
-        "img_label": "🖼️ Upload Gameplay Screenshot (Optional)",
-        "submit": "Send Question",
+        "news_btn": "📰 Gaming News",
+        "clear_btn": "🗑️ Clear Chat",
+        "input_placeholder": "Ask Gemly anything about gaming...",
+        "img_label": "🖼️ Upload Screenshot (Optional)",
         "specs_header": "💻 PC Compatibility Check",
-        "loading": "Summoning combat expertise..."
+        "loading": "Analyzing combat data..."
     }
 }
 
-# --- 3. القائمة الجانبية (Sidebar) ---
+# تهيئة ذاكرة المحادثة في الـ Session State
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# --- 4. القائمة الجانبية (Sidebar) ---
 with st.sidebar:
     st.markdown("<h1 style='color:#00ffcc;'>🎮 Gemly App</h1>", unsafe_allow_html=True)
     selected_lang = st.selectbox("🌐 Language", list(languages.keys()))
     t = languages[selected_lang]
+    
     st.markdown("---")
-    get_news = st.button(t["news_btn"])
+    if st.button(t["news_btn"]):
+        st.session_state.get_news = True
+    
+    if st.button(t["clear_btn"]):
+        st.session_state.messages = []
+        st.rerun()
+    
     st.markdown("---")
-    st.write("🚀 Version: 1.0 (Flash Lite)")
-    st.write("👨‍💻 Dev: Ziad&Gaming Guru Team")
+    st.write("👨‍💻 Dev: Ziad & Gemly Team")
 
-# --- 4. إعداد الموديل (Gemini 3.1 Flash Lite) ---
+# --- 5. إعداد الموديل ---
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
     model = genai.GenerativeModel(
         model_name="gemini-3.1-flash-lite",
-        system_instruction=f"You are Gemly AI, a pro gaming expert. Always respond in {selected_lang}. Use gaming slang and be very helpful with technical issues and game walkthroughs."
+        system_instruction=f"You are Gemly AI, a pro gaming expert. Always respond in {selected_lang}. Be helpful with technical issues and game walkthroughs."
     )
 except:
     st.error("API Key Missing!")
 
-# --- 5. الواجهة الرئيسية ---
+# --- 6. الواجهة الرئيسية ---
 st.markdown(f'<p class="neon-text">{t["title"]}</p>', unsafe_allow_html=True)
-st.markdown(f"<p style='text-align:center; color:#bbb;'>{t['subtitle']}</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align:center; color:#bbb; margin-bottom:30px;'>{t['subtitle']}</p>", unsafe_allow_html=True)
 
-if get_news:
+# عرض الأخبار إذا ضغط الزر
+if st.session_state.get(f"get_news"):
     with st.spinner("🔍 Fetching news..."):
-        news_res = model.generate_content("Give me 3 latest gaming news points.")
+        news_res = model.generate_content("Give me 3 short gaming news points.")
         st.info(news_res.text)
+        st.session_state.get_news = False
 
-# --- ميزة الصور الجديدة ---
-uploaded_file = st.file_uploader(t["img_label"], type=["jpg", "jpeg", "png"])
-if uploaded_file:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Current Screenshot", width=400)
+# عرض المحادثات السابقة
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-user_query = st.text_input(t["input_placeholder"])
+# رفع الصور
+with st.expander(t["img_label"]):
+    uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
+    if uploaded_file:
+        st.image(Image.open(uploaded_file), width=300)
 
-if st.button(t["submit"]):
-    if user_query:
+# منطقة إدخال الشات (الاحترافية)
+if prompt := st.chat_input(t["input_placeholder"]):
+    # إضافة رسالة اليوزر للذاكرة وعرضها
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # رد الـ AI
+    with st.chat_message("assistant"):
         with st.spinner(t["loading"]):
             try:
-                # بما أن Lite يركز على النص، سنرسل الاستفسار النصي
-                # وإذا كانت هناك صورة، يمكن للمستخدم وصفها في النص
-                response = model.generate_content(user_query)
-                st.markdown("### 💡 Answer:")
-                st.success(response.text)
+                # إرسال المحادثة كاملة كـ Context (سياق)
+                history_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.messages])
+                response = model.generate_content(f"History:\n{history_context}\nUser: {prompt}")
+                
+                full_response = response.text
+                st.markdown(full_response)
+                # إضافة رد الـ AI للذاكرة
+                st.session_state.messages.append({"role": "assistant", "content": full_response})
             except Exception as e:
                 st.error(f"Error: {e}")
-    else:
-        st.warning("Write something first!")
 
-# --- 6. أداة فحص المواصفات ---
-st.markdown("---")
+# --- 7. أداة فحص المواصفات (Expander أسفل الشات) ---
+st.markdown("<br>", unsafe_allow_html=True)
 with st.expander(t["specs_header"]):
     col1, col2 = st.columns(2)
     with col1: cpu_gpu = st.text_input("CPU & GPU")
